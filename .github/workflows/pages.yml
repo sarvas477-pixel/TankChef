@@ -1,0 +1,52 @@
+# Publishes the game to GitHub Pages. Enable it under Settings → Pages → Source: GitHub Actions.
+# scripts/package-pages.mjs assembles what's published: index.html, relay.json and
+# version.json, with the game (src/, vendor/, styles.css) under v/<commit>/. The relay server
+# and the tests are not needed there.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # The game goes under v/<commit>/, so browsers never mix cached files from two deploys.
+      - name: Package the site
+        run: node scripts/package-pages.mjs _site "${GITHUB_SHA::12}"
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5

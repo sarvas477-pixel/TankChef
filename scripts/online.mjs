@@ -55,7 +55,7 @@ async function findCloudflared() {
 /** Starts a quick tunnel to the local port and resolves with its public URL. */
 function openTunnel(exe, port) {
   return new Promise((resolveTunnel, reject) => {
-    const child = spawn(exe, ['tunnel', '--no-autoupdate', '--url', `http://127.0.0.1:${port}`], { stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(exe, ['tunnel', '--no-autoupdate', '--protocol', 'http2', '--url', `http://127.0.0.1:${port}`], { stdio: ['ignore', 'pipe', 'pipe'] });
     let log = '';
     let settled = false;
     const finish = (error, url) => {

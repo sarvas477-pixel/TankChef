@@ -1,0 +1,24 @@
+TANKCHEF — WINDOWS QUICK START
+
+1. Extract this ZIP fully.
+2. Open the extracted scorched-tanks folder in VS Code.
+3. In VS Code, choose Terminal > New Terminal.
+4. Run these commands one at a time:
+
+   npm install
+   npm start
+
+5. Open http://localhost:8081 in Chrome or Edge.
+
+If port 8081 is already in use, stop the other server or run:
+
+   $env:PORT=8082
+   npm start
+
+Then open http://localhost:8082.
+
+IMPORTANT:
+- Run commands in the terminal, not inside server/server.js.
+- JavaScript files must contain JavaScript only. Do not paste Markdown fences such as ```javascript into a .js file.
+- Keep the terminal open while playing.
+- If online relay support is unavailable, local play should still work; npm install must finish successfully to install the relay dependency.

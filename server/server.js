@@ -2,6 +2,7 @@
 // Start with: npm start
 
 import { createServer } from 'node:http';
+import { networkInterfaces } from 'node:os';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, posix, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -193,6 +194,18 @@ export async function startServer(options = {}) {
         address.port +
         (relay ? ' (relay on /ws)' : '')
     );
+    if (host === '0.0.0.0') {
+      try {
+        const nets = networkInterfaces();
+        for (const name of Object.keys(nets)) {
+          for (const net of nets[name]) {
+            if (net.family === 'IPv4' && !net.internal) {
+              console.log('  Network access (for other devices): http://' + net.address + ':' + address.port);
+            }
+          }
+        }
+      } catch {}
+    }
   }
 
   return {
